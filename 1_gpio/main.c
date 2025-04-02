@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+
 #define GPIO ((NRF_GPIO_REGS*)0x50000000)
 #define __BUTTON_1_PIN__ 13
 #define __BUTTON_2_PIN__ 14
@@ -23,29 +24,52 @@ typedef struct {
 } NRF_GPIO_REGS;
 
 void button_init(){ 
-	GPIO->PIN_CNF[__BUTTON_1_PIN__] = (uint32_t)(1 << 2);
-	GPIO->PIN_CNF[__BUTTON_2_PIN__] = (uint32_t)(1 << 2);
-	// Fill inn the configuration for the remaining buttons 
+    GPIO->PIN_CNF[__BUTTON_1_PIN__] = (0 << 0) | (3 << 2);  //(3 << 16); input, pullup, sense for low, as it's high by default from pullup
+    GPIO->PIN_CNF[__BUTTON_2_PIN__] = (0 << 0) | (3 << 2);  //(3 << 16); --||--
 }
+void led_init(){
+	for(int i = 17; i <= 20; i++){
+		GPIO->DIRSET = (1 << i);
+		GPIO->OUTSET = (1 << i);
+	}
+}
+
+void leds_off(){
+	GPIO->OUTSET |= (1 << 17);
+	GPIO->OUTSET |= (1 << 18);
+	GPIO->OUTSET |= (1 << 19);
+	GPIO->OUTSET |= (1 << 20);
+}
+
+void leds_on(){
+	GPIO->OUTCLR |= (1 <<17);  //trekk porten lav utifra active-low 
+	GPIO->OUTCLR |= (1 <<18);
+	GPIO->OUTCLR |= (1 <<19);
+	GPIO->OUTCLR |= (1 <<20);
+}
+
 
 int main(){
 	// Configure LED Matrix
-	for(int i = 17; i <= 20; i++){
-		GPIO->DIRSET = (1 << i);
-		GPIO->OUTCLR = (1 << i);
-	}
-
-	// Configure buttons -> see button_init()
+	led_init();
 	button_init();
+	
+	//led_init();
 
 	int sleep = 0;
 	while(1){
 
 		
 		//Check if button 1 is pressed;
-		if (GPIO->PIN_CNF[__BUTTON_1_PIN__] & (uint32_t)(1 << 8)){
-			GPIO->PIN_CNF[17] = (uint32_t)(1 << 8);
+		if (!(GPIO->IN & (1 << __BUTTON_1_PIN__))){
+			leds_on();		
 		}
+		
+
+		if (!(GPIO->IN & (1 << __BUTTON_2_PIN__))){
+			leds_off();
+		}
+		
 		//turn on LED matrix if it is. 
 
 		/* Check if button 2 is pressed;
