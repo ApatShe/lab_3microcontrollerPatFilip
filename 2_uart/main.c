@@ -45,7 +45,8 @@ int main(){
 
     while (1){
 
-       
+        iprintf("The average grade in TTK%d was in %d was: %c\n\r",4235
+            ,2022,'B');
         
 
        /* if (!(GPIO->IN & (1 << 13))){
