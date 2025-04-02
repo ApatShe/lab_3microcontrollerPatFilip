@@ -24,7 +24,7 @@ typedef struct {
 } NRF_GPIO_REGS;
 
 void button_init(){ 
-    GPIO->PIN_CNF[__BUTTON_1_PIN__] = (0 << 0) | (3 << 2);  //(3 << 16); input, pullup, sense for low, as it's high by default from pullup
+    GPIO->PIN_CNF[__BUTTON_1_PIN__] = (0 << 0) | (3 << 2);  //(3 << 16); input, pullup
     GPIO->PIN_CNF[__BUTTON_2_PIN__] = (0 << 0) | (3 << 2);  //(3 << 16); --||--
 }
 void led_init(){
